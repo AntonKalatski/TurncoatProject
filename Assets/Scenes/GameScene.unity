@@ -648,7 +648,7 @@ MonoBehaviour:
   - MousePlane
   layerMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 0
   rayCastLenght: 50
 --- !u!4 &1069625492
 Transform:

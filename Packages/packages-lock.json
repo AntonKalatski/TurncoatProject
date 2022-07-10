@@ -178,13 +178,13 @@
       "url": "https://packages.unity.com"
     },
     "jp.hadashikick.vcontainer": {
-      "version": "1.11.1",
+      "version": "https://github.com/hadashiA/VContainer.git?path=VContainer/Assets/VContainer#1.11.1",
       "depth": 0,
-      "source": "registry",
+      "source": "git",
       "dependencies": {
         "com.unity.nuget.mono-cecil": "1.10.1"
       },
-      "url": "https://package.openupm.com"
+      "hash": "80086eec36bc14d0841ffe84aa4a7ce50bf5b613"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

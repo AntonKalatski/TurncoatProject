@@ -7,7 +7,7 @@ using VContainer.Unity;
 
 namespace Scopes.Game
 {
-    public class GameLifetimeScope : LifetimeScope
+    public class ProjectScope : LifetimeScope
     {
         [SerializeField] private TestConfig _config;
         protected override void Configure(IContainerBuilder builder)

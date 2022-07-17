@@ -1,4 +1,7 @@
+using System;
+using RayCaster;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Units
 {
@@ -9,6 +12,7 @@ namespace Units
         [SerializeField, Range(0, 0.25f)] private float minDistance = 0.05f;
         private Vector3 _targetPosition;
         private bool _canMove;
+        private MouseRaycaster _mouseRaycaster;
 
         private void Awake()
         {
@@ -16,11 +20,17 @@ namespace Units
                 myTransform = transform;
         }
 
+        private void Start()
+        {
+            _mouseRaycaster = MouseRaycaster.Instance;
+        }
+
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetMouseButtonDown(0))
             {
-                Move(GenerateRandomValue());
+                if (_mouseRaycaster.TryGetPosition(out Vector3 position))
+                    Move(position);
             }
 
             if (_canMove)

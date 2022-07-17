@@ -11,9 +11,11 @@ namespace RayCaster
         private Camera _camera;
         private Plane _plane;
 
+        public static MouseRaycaster Instance;
         //todo camera provider
         private void Awake()
         {
+            Instance = this;
             layerMask = LayerMask.GetMask(layers);
             _plane = new Plane(Vector3.up, Vector3.zero);
             _camera = Camera.main;
@@ -30,15 +32,16 @@ namespace RayCaster
             }
         }
 
-        private void FakeUpdate()
+        public bool TryGetPosition(out Vector3 position)
         {
+            position = Vector3.zero;
             var mousePos = Input.mousePosition;
-            Ray ray = _camera.ScreenPointToRay(mousePos);
+            var ray = _camera.ScreenPointToRay(mousePos);
 
-            if (Physics.Raycast(ray, out RaycastHit info, rayCastLenght, layerMask))
-            {
-                debugPoint.position = ray.GetPoint(rayCastLenght);
-            }
+            if (!_plane.Raycast(ray, out float enter)) return false;
+            position = ray.GetPoint(enter);
+            debugPoint.position = position;
+            return true;
         }
     }
 }

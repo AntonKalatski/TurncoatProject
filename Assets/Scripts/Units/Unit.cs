@@ -1,4 +1,3 @@
-using System;
 using RayCaster;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -7,12 +6,24 @@ namespace Units
 {
     public class Unit : MonoBehaviour
     {
+        [SerializeField] private Animator unitAnimator;
         [SerializeField] private Transform myTransform;
         [SerializeField] private float moveSpeed = 5f;
         [SerializeField, Range(0, 0.25f)] private float minDistance = 0.05f;
-        private Vector3 _targetPosition;
-        private bool _canMove;
         private MouseRaycaster _mouseRaycaster;
+        private Vector3 _targetPosition;
+        private bool _isMoving;
+        private static readonly int IsWalking = Animator.StringToHash("IsWalking");
+
+        private bool CanMove
+        {
+            get => _isMoving;
+            set
+            {
+                _isMoving = value;
+                unitAnimator.SetBool(IsWalking, value);
+            }
+        }
 
         private void Awake()
         {
@@ -33,17 +44,9 @@ namespace Units
                     Move(position);
             }
 
-            if (_canMove)
-            {
-                MovementProcess();
-            }
-        }
-
-        private Vector3 GenerateRandomValue()
-        {
-            float x = Random.Range(-5, 5);
-            float z = Random.Range(-5, 5);
-            return new Vector3(x, 0, z);
+            if (!CanMove) return;
+            MovementProcess();
+            RotationProcess();
         }
 
         private void MovementProcess()
@@ -55,14 +58,22 @@ namespace Units
             }
             else
             {
-                _canMove = false;
+                CanMove = false;
             }
+        }
+
+        private void RotationProcess()
+        {
+            Vector3 relativePos = _targetPosition - myTransform.position;
+            Quaternion currentRot = myTransform.localRotation;
+            Quaternion futureRotation = Quaternion.LookRotation(relativePos);
+            transform.localRotation = Quaternion.Slerp(currentRot, futureRotation,Time.deltaTime * moveSpeed);
         }
 
         private void Move(Vector3 targetPosition)
         {
             _targetPosition = targetPosition;
-            _canMove = true;
+            CanMove = true;
         }
     }
 }

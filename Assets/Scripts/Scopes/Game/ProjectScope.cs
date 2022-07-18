@@ -1,6 +1,6 @@
 using Configs.Test;
 using Services.Advertisement;
-using Services.Input;
+using Services.GameInput;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;

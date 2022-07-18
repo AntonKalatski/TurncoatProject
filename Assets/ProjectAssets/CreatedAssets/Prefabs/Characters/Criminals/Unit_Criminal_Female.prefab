@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5218967435695688074}
   - component: {fileID: 5218967435695688077}
+  - component: {fileID: 7495604308987205268}
   m_Layer: 0
   m_Name: Unit_Criminal_Female
   m_TagString: Untagged
@@ -49,6 +50,20 @@ MonoBehaviour:
   myTransform: {fileID: 7157632322036790694}
   moveSpeed: 5
   minDistance: 0.01
+--- !u!136 &7495604308987205268
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5218967435695688076}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &7158974604769440450
 GameObject:
   m_ObjectHideFlags: 0

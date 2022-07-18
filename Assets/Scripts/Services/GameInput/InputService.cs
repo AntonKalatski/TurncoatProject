@@ -2,7 +2,7 @@ using Configs.Test;
 using UnityEngine;
 using VContainer.Unity;
 
-namespace Services.Input
+namespace Services.GameInput
 {
     public class InputService : IInputService, ITickable
     {

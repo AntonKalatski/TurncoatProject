@@ -1,4 +1,4 @@
-namespace Services.Input
+namespace Services.GameInput
 {
     public interface IInputService
     {

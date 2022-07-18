@@ -1,6 +1,5 @@
 using RayCaster;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Units
 {
@@ -24,7 +23,6 @@ namespace Units
                 unitAnimator.SetBool(IsWalking, value);
             }
         }
-
         private void Awake()
         {
             if (TryGetComponent<Transform>(out var trans))
@@ -38,16 +36,17 @@ namespace Units
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                if (_mouseRaycaster.TryGetPosition(out Vector3 position))
-                    Move(position);
-            }
-
             if (!CanMove) return;
             MovementProcess();
             RotationProcess();
         }
+        public void Move(Vector3 targetPosition)
+        {
+            _targetPosition = targetPosition;
+            CanMove = true;
+        }
+
+        
 
         private void MovementProcess()
         {
@@ -68,12 +67,6 @@ namespace Units
             Quaternion currentRot = myTransform.localRotation;
             Quaternion futureRotation = Quaternion.LookRotation(relativePos);
             transform.localRotation = Quaternion.Slerp(currentRot, futureRotation,Time.deltaTime * moveSpeed);
-        }
-
-        private void Move(Vector3 targetPosition)
-        {
-            _targetPosition = targetPosition;
-            CanMove = true;
         }
     }
 }

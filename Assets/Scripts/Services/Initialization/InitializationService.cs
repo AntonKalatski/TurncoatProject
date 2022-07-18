@@ -1,6 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Services.Advertisement;
-using Services.Input;
+using Services.GameInput;
 using UnityEngine;
 using VContainer.Unity;
 

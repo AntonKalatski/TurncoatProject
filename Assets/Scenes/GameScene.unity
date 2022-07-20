@@ -530,6 +530,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 8948588266506552476, guid: f14a81df57d689b4baa56ca4cf02b3a2,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.01
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f14a81df57d689b4baa56ca4cf02b3a2, type: 3}
 --- !u!1001 &181250921
@@ -934,7 +939,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4409a5fcd7239984bb1fc5af464abb04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectedUnit: {fileID: 1606886255}
+  selectedUnit: {fileID: 0}
   raycaster: {fileID: 1069625491}
   layerMask:
     serializedVersion: 2
@@ -1035,10 +1040,6 @@ MonoBehaviour:
   debugPoint: {fileID: 621659434}
   layers:
   - MousePlane
-  layerMask:
-    serializedVersion: 2
-    m_Bits: 0
-  rayCastLenght: 50
 --- !u!4 &1069625492
 Transform:
   m_ObjectHideFlags: 0
@@ -1464,18 +1465,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f14a81df57d689b4baa56ca4cf02b3a2, type: 3}
---- !u!114 &1606886255 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5218967435695688077, guid: f14a81df57d689b4baa56ca4cf02b3a2,
-    type: 3}
-  m_PrefabInstance: {fileID: 129228350}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac8edb07150fff045a2b1419992189f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1904997999
 GameObject:
   m_ObjectHideFlags: 0

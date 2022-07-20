@@ -6,8 +6,8 @@ namespace RayCaster
     {
         [SerializeField] private Transform debugPoint;
         [SerializeField] private string[] layers;
-        [SerializeField] private LayerMask layerMask;
-        [SerializeField, Range(0, 100f)] private float rayCastLenght = 50f;
+        // [SerializeField] private LayerMask layerMask;
+        // [SerializeField, Range(0, 100f)] private float rayCastLenght = 50f;
         private Camera _camera;
         private Plane _plane;
 
@@ -16,7 +16,7 @@ namespace RayCaster
         private void Awake()
         {
             Instance = this;
-            layerMask = LayerMask.GetMask(layers);
+            // layerMask = LayerMask.GetMask(layers);
             _plane = new Plane(Vector3.up, Vector3.zero);
             _camera = Camera.main;
         }

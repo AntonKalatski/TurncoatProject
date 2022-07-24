@@ -24,6 +24,7 @@ namespace RayCaster
         private void Update()
         {
             var mousePos = Input.mousePosition;
+                
             Ray ray = _camera.ScreenPointToRay(mousePos);
 
             if (_plane.Raycast(ray, out float enter))

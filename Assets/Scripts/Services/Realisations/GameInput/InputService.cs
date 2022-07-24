@@ -1,8 +1,9 @@
 using Configs.Test;
+using Services.GameInputProvider.Interfaces;
 using UnityEngine;
 using VContainer.Unity;
 
-namespace Services.GameInput
+namespace Services.Realisations.GameInput
 {
     public class InputService : IInputService, ITickable
     {

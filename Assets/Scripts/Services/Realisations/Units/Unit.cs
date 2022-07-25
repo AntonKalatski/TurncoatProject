@@ -1,5 +1,6 @@
 using Services.RaycastService.Entities;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Services.Realisations.Units
 {
@@ -29,6 +30,15 @@ namespace Services.Realisations.Units
         {
             visuals.SetVisualsEnabled(false);
             myTransform = transform;
+            
+            if (TryGetComponent<Transform>(out var trans))
+                myTransform = transform;
+        }
+
+        private void InputActionHandler(InputAction.CallbackContext context)
+        {
+            if (context.performed)
+                Debug.Log(context);
         }
 
         private void Start()

@@ -1,4 +1,5 @@
 using Configs.Test;
+using RayCaster;
 using Services.GameInputProvider.Entities;
 using Services.GameInputProvider.Interfaces;
 using UnityEngine;
@@ -13,15 +14,16 @@ namespace Scopes.Game
         [SerializeField] private TestConfig _config;
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.RegisterEntryPoint<StandaloneInputProvider>().As<IInputProvider>();
-            Debug.Log("GameLifetimeScope Configure");
-            RegisterIntances(builder);
+            RegisterInputProvider(builder);
+            builder.RegisterInstance(_config);
+            builder.Register<RaycastBehaviourFactory>(Lifetime.Singleton).As<IRaycastBehaviourFactory>();
+            builder.Register<RaycastStrategy>(Lifetime.Singleton).AsImplementedInterfaces();
         }
 
-        private void RegisterIntances(IContainerBuilder builder)
+        private void RegisterInputProvider(IContainerBuilder builder)
         {
-            builder.RegisterInstance(_config);
             builder.RegisterInstance(_gameInputConfig).As<IInputConfig>();
+            builder.RegisterEntryPoint<StandaloneInputProvider>().As<IInputProvider>();
         }
     }
 }

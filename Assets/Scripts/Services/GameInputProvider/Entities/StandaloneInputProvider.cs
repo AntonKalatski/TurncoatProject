@@ -9,7 +9,7 @@ namespace Services.GameInputProvider.Entities
     {
         private readonly IInputConfig _config;
         private Action<InputArgs> _onMouseButtonDown;
-        
+
         private Vector2 prevPos;
         private Vector2 currentPos;
 
@@ -22,11 +22,17 @@ namespace Services.GameInputProvider.Entities
         {
             prevPos = currentPos;
             currentPos = Input.mousePosition;
-            
+
             if (Input.GetMouseButtonDown(0))
             {
-                _onMouseButtonDown?.Invoke(new InputArgs(currentPos,currentPos - prevPos));
+                OnMouseButtonDown();
             }
+        }
+
+        private void OnMouseButtonDown()
+        {
+            var delta = currentPos - prevPos;
+            _onMouseButtonDown?.Invoke(new InputArgs(currentPos, delta));
         }
 
         public void AddInputListener(IInputListener listener)

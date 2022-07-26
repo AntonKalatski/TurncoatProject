@@ -7,10 +7,12 @@ using UnityEngine;
 
 namespace RayCaster
 {
-    public class InputRaycaster : IInputRaycaster, IInitializable, IInputListener,IDisposable 
+    public class InputRaycaster : IInputRaycaster, IInputListener, IStartable, IDisposable
     {
         private readonly IInputProvider _inputProvider;
+        private readonly IRaycastStrategy _raycastStrategy;
         private readonly ICameraService _cameraService;
+        private ICameraProvider _cameraProvider;
 
         public InputRaycaster(IInputProvider inputProvider, ICameraService cameraService)
         {
@@ -18,11 +20,11 @@ namespace RayCaster
             _cameraService = cameraService;
         }
 
-        public void Initialize()
+        public void Start()
         {
-             Debug.Log("InputRaycaster Initialize");
+            Debug.Log("InputRaycaster Initialize");
             _inputProvider.AddInputListener(this);
-            var mainCameraProvider = _cameraService.GetCameraProvider(CameraId.Main);
+            _cameraProvider = _cameraService.GetCameraProvider(CameraId.Main);
         }
 
         public void Dispose()
@@ -32,7 +34,15 @@ namespace RayCaster
 
         public void OnMouseButtonDownHandler(InputArgs args)
         {
-            Debug.Log($"On Mouse button down Pointer:_{args.Pointer} Delta:_{args.Delta}");
+            if (!TryGetLayer(in args, out RaycastHit hit)) return;
+            var gameObject = hit.transform.gameObject;
+            Debug.Log($"On Mouse button down Pointer:_{args.Pointer} Delta:_{args.Delta} Layer:_{gameObject.layer}");
+        }
+
+        private bool TryGetLayer(in InputArgs args, out RaycastHit hit)
+        {
+            var ray = _cameraProvider.Camera.ScreenPointToRay(args.Pointer);
+            return Physics.Raycast(ray, out hit);
         }
     }
 }

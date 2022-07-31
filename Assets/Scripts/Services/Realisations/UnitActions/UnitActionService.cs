@@ -1,61 +1,40 @@
-using System;
-using RayCaster;
-using Units;
+using Services.Realisations.Units;
 using UnityEngine;
 
 namespace Services.Realisations.UnitActions
 {
-    public class UnitActionService : MonoBehaviour
+    public class UnitActionService : IUnitActionService
     {
-        public event EventHandler OnSelectedUnitChange;
-        
-        [SerializeField] private Unit selectedUnit;
-        [SerializeField] private MouseRaycaster raycaster;
-        [SerializeField] private LayerMask layerMask;
-        private Camera _camera;
-        public static UnitActionService Instance { get; private set; }
+        public Unit SelectedUnit { get; private set; }
 
-
-        private void Awake()
+        public void HandleUnitSelection(RaycastHit hit)
         {
-            _camera = Camera.main;
-            if (Instance != null)
-            {
-                Debug.LogError("There's more than one Unit Action system!" + transform + " - " + Instance);
-                Destroy(gameObject);
-                return;
-            }
-            Instance = this;
+            if (hit.transform.TryGetComponent<Unit>(out var unit))
+                SetSelectedUnit(unit);
         }
 
-        private void Update()
+        public void HandleUnitMove(RaycastHit hit)
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                if(TryHandleUnitSelection()) return;
-                if (raycaster.TryGetPosition(out Vector3 position))
-                    selectedUnit.Move(position);
-            }
+            if (!ReferenceEquals(SelectedUnit, null))
+                SelectedUnit.Move(hit.point);
         }
 
-        public Unit GetSelectedUnit()
+        public void HandleUnitDeselection()
         {
-            return selectedUnit;
-        }
-
-        private bool TryHandleUnitSelection()
-        {
-            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
-            if (!Physics.Raycast(ray, out RaycastHit raycastHit, float.MaxValue, layerMask)) return false;
-            if (!raycastHit.transform.TryGetComponent<Unit>(out var unit)) return false;
-            SetSelectedUnit(unit);
-            return true;
+            SelectedUnit?.Deselect();
+            SelectedUnit = null;
         }
 
         private void SetSelectedUnit(Unit unit)
         {
-            selectedUnit = unit;
-            OnSelectedUnitChange?.Invoke(this,EventArgs.Empty);
+            if (ReferenceEquals(SelectedUnit, unit))
+            {
+                return;
+            }
+
+            SelectedUnit?.Deselect();
+            SelectedUnit = unit;
+            SelectedUnit.SetSelected();
         }
     }
 }

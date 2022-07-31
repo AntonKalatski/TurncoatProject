@@ -5,7 +5,7 @@ using VContainer.Unity;
 
 namespace Services.GameInputProvider.Entities
 {
-    public class StandaloneInputProvider : IInputProvider, ILateTickable
+    public class StandaloneInputProvider : IInputService, ILateTickable
     {
         private readonly IInputConfig _config;
         private Action<InputArgs> _onMouseButtonDown;

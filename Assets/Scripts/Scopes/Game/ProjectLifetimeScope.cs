@@ -1,5 +1,4 @@
 using Configs.Test;
-using RayCaster;
 using Services.GameInputProvider.Entities;
 using Services.GameInputProvider.Interfaces;
 using UnityEngine;
@@ -16,14 +15,12 @@ namespace Scopes.Game
         {
             RegisterInputProvider(builder);
             builder.RegisterInstance(_config);
-            builder.Register<RaycastBehaviourFactory>(Lifetime.Singleton).As<IRaycastBehaviourFactory>();
-            builder.Register<RaycastStrategy>(Lifetime.Singleton).AsImplementedInterfaces();
         }
 
         private void RegisterInputProvider(IContainerBuilder builder)
         {
             builder.RegisterInstance(_gameInputConfig).As<IInputConfig>();
-            builder.RegisterEntryPoint<StandaloneInputProvider>().As<IInputProvider>();
+            builder.RegisterEntryPoint<StandaloneInputProvider>().As<IInputService>();
         }
     }
 }

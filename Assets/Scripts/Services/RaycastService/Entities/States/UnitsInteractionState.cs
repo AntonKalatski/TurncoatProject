@@ -23,9 +23,11 @@ namespace Services.RaycastService.Entities.States
         {
             UnitActionHandle(hit);
         }
+
         public void ExitState()
         {
         }
+
         private void UnitActionHandle(RaycastHit hit)
         {
             _unitActionService.HandleUnitSelection(hit);

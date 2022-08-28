@@ -1,8 +1,9 @@
+using UnityEngine;
 using System.Collections.Generic;
 using Providers.GameCameraProvider;
-using UnityEngine;
+using Services.GameCameraProvider;
 
-namespace Services.GameCameraProvider
+namespace Services.CameraService.Entities
 {
     public class CameraService : ICameraService
     {

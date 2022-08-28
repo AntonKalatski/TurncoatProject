@@ -1,8 +1,10 @@
+using System;
 using Services.RaycastService.Entities;
 using UnityEngine;
 
 namespace Services.Realisations.Units
 {
+    //todo huge trash class - need to rework
     public class Unit : MonoBehaviour
     {
         [SerializeField] private Animator unitAnimator;
@@ -15,12 +17,17 @@ namespace Services.Realisations.Units
         private bool _isMoving;
         private static readonly int IsWalking = Animator.StringToHash("IsWalking");
 
-        private bool CanMove
+        public event Action<Unit> OnUnitMoving;
+        public Vector3 WorldPosition => transform.position;
+
+
+        public bool IsMoving
         {
             get => _isMoving;
-            set
+            private set
             {
                 _isMoving = value;
+                OnUnitMoving?.Invoke(this);
                 unitAnimator.SetBool(IsWalking, value);
             }
         }
@@ -38,17 +45,16 @@ namespace Services.Realisations.Units
 
         private void Update()
         {
-            if (!CanMove) return;
+            if (!IsMoving) return;
             MovementProcess();
             RotationProcess();
         }
 
-        public void Move(Vector3 targetPosition)
+        public void Move(Vector3 position)
         {
-            _targetPosition = targetPosition;
-            CanMove = true;
+            _targetPosition = position;
+            IsMoving = true;
         }
-
 
         private void MovementProcess()
         {
@@ -59,7 +65,7 @@ namespace Services.Realisations.Units
             }
             else
             {
-                CanMove = false;
+                IsMoving = false;
             }
         }
 
@@ -79,6 +85,11 @@ namespace Services.Realisations.Units
         public void SetSelected()
         {
             visuals.SetVisualsEnabled(true);
+        }
+
+        public override string ToString()
+        {
+            return $"Unit_Name";
         }
     }
 }

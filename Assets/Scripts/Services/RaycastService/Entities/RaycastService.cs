@@ -1,14 +1,12 @@
-using System;
 using Providers.GameCameraProvider;
 using Services.GameCameraProvider;
 using Services.GameInputProvider.Entities;
 using Services.RaycastService.Interfaces;
 using UnityEngine;
-using VContainer.Unity;
 
 namespace Services.RaycastService.Entities
 {
-    public class RaycastService : IRaycastService, IStartable
+    public class RaycastService : IRaycastService
     {
         private readonly ICameraService _cameraService;
         private ICameraProvider _cameraProvider;
@@ -18,7 +16,7 @@ namespace Services.RaycastService.Entities
             _cameraService = cameraService;
         }
 
-        public void Start()
+        public void Initialize()
         {
             _cameraProvider = _cameraService.GetCameraProvider(CameraId.Main);
         }

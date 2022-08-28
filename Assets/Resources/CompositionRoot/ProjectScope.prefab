@@ -48,5 +48,5 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
-  _gameInputConfig: {fileID: 11400000, guid: 26b8c092ba4173b42a12d30372673cc6, type: 2}
-  _config: {fileID: 11400000, guid: 4658e9769599a5140b5dd17e6f97a495, type: 2}
+  gameLevels: {fileID: 11400000, guid: 8bb52585c5fd7134294e1fef3e9a770e, type: 2}
+  gameInputConfig: {fileID: 11400000, guid: 26b8c092ba4173b42a12d30372673cc6, type: 2}

@@ -8,13 +8,13 @@ using VContainer.Unity;
 
 namespace Services.RaycastService.Entities
 {
-    public class InputInteractionManager : IInteractionManager, IInitializable, IInputListener, IDisposable
+    public class InputInteractionManager : IInteractionManager, IInputListener, IDisposable
     {
         private readonly Dictionary<string, IInteractionState> _states = new Dictionary<string, IInteractionState>();
-        private readonly string[] _layers = new string[7];
         private readonly IInputService _inputService;
         private readonly IRaycastService _raycastService;
         private readonly IInteractionStateFactory _factory;
+        private readonly string[] _layers = new string[7];
         public IInteractionState Current { get; private set; }
 
         public InputInteractionManager(IInputService inputService, IRaycastService raycastService,
@@ -59,12 +59,10 @@ namespace Services.RaycastService.Entities
             var layerName = LayerMask.LayerToName(layerId);
             if (!_states.TryGetValue(layerName, out var state))
             {
-                Debug.LogWarning(
-                    $"{nameof(InputInteractionManager)} - There is no such state, creating through factory");
+                Debug.LogWarning($"{nameof(InputInteractionManager)} - There is no such state, creating through factory");
                 if (!TryCreateState(layerName, out state))
                 {
-                    Debug.LogWarning(
-                        $"{nameof(InputInteractionManager)} - Factory doesn't has any conditions to create such state");
+                    Debug.LogWarning($"{nameof(InputInteractionManager)} - Factory doesn't has any conditions to create such state");
                     return false;
                 }
 

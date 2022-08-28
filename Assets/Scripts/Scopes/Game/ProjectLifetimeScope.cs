@@ -1,6 +1,7 @@
 using Configs.Test;
 using Services.GameInputProvider.Entities;
 using Services.GameInputProvider.Interfaces;
+using Services.GameLevelService;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -9,17 +10,23 @@ namespace Scopes.Game
 {
     public class ProjectLifetimeScope : LifetimeScope
     {
-        [SerializeField] private InputConfig _gameInputConfig;
-        [SerializeField] private TestConfig _config;
+        [SerializeField] private GameLevelsConfig gameLevels;
+        [SerializeField] private InputConfig gameInputConfig;
         protected override void Configure(IContainerBuilder builder)
         {
+            RegisterGameLevels(builder);
             RegisterInputProvider(builder);
-            builder.RegisterInstance(_config);
+        }
+
+        private void RegisterGameLevels(IContainerBuilder builder)
+        {
+            builder.RegisterInstance(gameLevels).As<IGameLevelsConfig>().AsSelf();
+            builder.Register<GameLevelsService>(Lifetime.Singleton).AsImplementedInterfaces().Build();
         }
 
         private void RegisterInputProvider(IContainerBuilder builder)
         {
-            builder.RegisterInstance(_gameInputConfig).As<IInputConfig>();
+            builder.RegisterInstance(gameInputConfig).As<IInputConfig>();
             builder.RegisterEntryPoint<StandaloneInputProvider>().As<IInputService>();
         }
     }

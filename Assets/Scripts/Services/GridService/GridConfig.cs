@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace Services.Grid
+namespace Services.GridService
 {
-    [CreateAssetMenu(fileName = nameof(GridConfig), menuName = "Configs/Grid/" + nameof(GridConfig), order = 0)]
+    [CreateAssetMenu(fileName = nameof(GridConfig), menuName = "Configs/Grid/" + nameof(GridConfig))]
     public class GridConfig : ScriptableObject
     {
         [SerializeField] private GameObject prefab;

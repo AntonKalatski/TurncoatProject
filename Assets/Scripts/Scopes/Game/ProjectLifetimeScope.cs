@@ -1,4 +1,3 @@
-using Configs.Test;
 using Services.GameInputProvider.Entities;
 using Services.GameInputProvider.Interfaces;
 using Services.GameLevelService;
@@ -27,7 +26,7 @@ namespace Scopes.Game
         private void RegisterInputProvider(IContainerBuilder builder)
         {
             builder.RegisterInstance(gameInputConfig).As<IInputConfig>();
-            builder.RegisterEntryPoint<StandaloneInputProvider>().As<IInputService>();
+            builder.RegisterEntryPoint<StandaloneInputService>().As<IInputService>();
         }
     }
 }

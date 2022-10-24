@@ -9,7 +9,6 @@ namespace Services.LevelGrid
     {
         private readonly IGridService _gridService;
         private readonly Dictionary<GridCell, Unit> _levelGridMap = new Dictionary<GridCell, Unit>();
-        private GridService.Grid LevelGrid { get; set; }
 
         public LevelGridService(IGridService gridService)
         {
@@ -18,52 +17,89 @@ namespace Services.LevelGrid
 
         public void CreateLevelGrid()
         {
-            LevelGrid = _gridService.CreateGrid();
+            _gridService.CreateGrid();
+            foreach (var cell in _gridService.Grid.GridCells)
+            {
+                _levelGridMap.Add(cell, null);
+            }
         }
 
-        public bool TrySetUnitOnGridCell(Unit unit, Vector3 hitPos, out Vector3 unitPos)
+        public bool TrySetUnitOnGridCell(Unit unit, GridCell cell)
         {
-            if (!LevelGrid.TryGetGridCell(hitPos, out var cell))
-            {
-                unitPos = unit.WorldPosition;
+            if (!_levelGridMap.ContainsKey(cell))
                 return false;
-            }
-
-            
             _levelGridMap[cell] = unit;
-            unitPos = cell.Position.ToVector3();
             cell.SetUnit(_levelGridMap[cell]);
             return true;
         }
 
-        public GridCell GetRandomGridCell() => LevelGrid.GetRandomGridCell();
-
-        public bool TryGetUnitAtGridCell(Vector3 pos, out Unit unit)
+        public bool TryGetGridCellAtPoint(in Vector3 hitPoint, out GridCell cell)
         {
-            if (LevelGrid.TryGetGridCell(pos, out var cell))
-                return _levelGridMap.TryGetValue(cell, out unit);
-            unit = null;
+            return _gridService.TryGetGridCell(hitPoint, out cell) && IsGridCellEmpty(cell, out var unit);
+        }
+
+        public bool TryGetRandomGridCell(out GridCell cell)
+        {
+            return _gridService.TryGetRandomGridCell(out cell) && IsGridCellEmpty(cell, out var unit);
+        }
+
+        public bool TryClearUnitAtGridCell(GridCell cell)
+        {
+            if (!_levelGridMap.ContainsKey(cell))
+            {
+                return false;
+            }
+
+            _levelGridMap[cell] = null;
+            cell.SetUnit(_levelGridMap[cell]);
+
             return false;
         }
 
-        public bool TryClearUnitAtGridCell(Vector3 pos)
+        public bool TrySetUnitOnGridCell(Unit unit, out GridCell cell)
         {
-            if (!LevelGrid.TryGetGridCell(pos, out var cell))
+            if (!_gridService.TryGetGridCell(unit.CurrentPosition, out cell))
             {
-                Debug.Log($"There is no such cell in grid!");
                 return false;
             }
 
-            if (!_levelGridMap.ContainsKey(cell))
+            if (!IsGridCellEmpty(cell, out var emptyUnit))
             {
-                Debug.Log($"There is no such cell in grid!");
                 return false;
             }
 
-            Debug.Log($"Successfully removed unit: {_levelGridMap[cell]} from cell: {cell}");
-            _levelGridMap[cell] = null;
+            _levelGridMap[cell] = unit;
             cell.SetUnit(_levelGridMap[cell]);
             return true;
+        }
+
+        public bool TryClearGridCellAtPoint(Vector3 point, out GridCell cell)
+        {
+            if (!_gridService.TryGetGridCell(point, out cell))
+                return false;
+
+            if (!_levelGridMap.ContainsKey(cell))
+                return false;
+
+            _levelGridMap[cell] = null;
+            cell.SetUnit(_levelGridMap[cell]);
+
+            return true;
+        }
+
+        public GridPosition GetGridPosition(Vector3 position)
+        {
+            return _gridService.GetGridPosition(position);
+        }
+
+        public Vector3 GetWorldPosition(GridPosition gridPosition)
+        {
+            return _gridService.GetWorldPosition(gridPosition);
+        }
+
+        private bool IsGridCellEmpty(GridCell gridCell, out Unit unit)
+        {
+            return !_levelGridMap.TryGetValue(gridCell, out unit) || ReferenceEquals(unit, null);
         }
     }
 }

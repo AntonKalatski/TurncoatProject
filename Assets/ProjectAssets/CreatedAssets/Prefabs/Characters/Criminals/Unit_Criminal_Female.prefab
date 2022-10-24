@@ -147,7 +147,7 @@ MonoBehaviour:
   unitAnimator: {fileID: 7065720401238224284}
   myTransform: {fileID: 7157632322036790694}
   visuals: {fileID: 1757688155366762104}
-  moveSpeed: 5
+  moveSpeed: 2
   minDistance: 0.01
 --- !u!136 &7495604308987205268
 CapsuleCollider:

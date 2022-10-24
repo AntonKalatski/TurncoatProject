@@ -2,10 +2,10 @@ using Services.CameraService.Entities;
 using Services.GameLevelService;
 using Services.GridService;
 using Services.LevelGrid;
+using Services.PointerService;
 using Services.RaycastService.Entities;
 using Services.RaycastService.Entities.Factory;
 using Services.Realisations.Initialization;
-using Services.Realisations.UnitActions;
 using Services.Realisations.UnitService;
 using UnityEngine;
 using VContainer;
@@ -17,18 +17,19 @@ namespace Scopes.Initialization
     {
         [SerializeField] private GridConfig gridConfig;
         [SerializeField] private UnitConfig unitConfig;
+        [SerializeField] private PointerServiceConfig pointerServiceConfig;
 
         protected override void Configure(IContainerBuilder builder)
         {
             Debug.Log("InitializationSceneScope Configure");
             builder.RegisterEntryPoint<GameSceneBootstrapper>();
 
-
-            BindLevelServices(builder);
             BindConfigs(builder);
-            BindInputService(builder);
-            BindRaycastService(builder);
+            BindLevelServices(builder);
             BindCameraServices(builder);
+            BindInputService(builder);
+            BindPointerService(builder);
+            BindRaycastService(builder);
             BindUnitServices(builder);
             BindGridServices(builder);
         }
@@ -41,12 +42,18 @@ namespace Scopes.Initialization
         private void BindConfigs(IContainerBuilder builder)
         {
             builder.RegisterInstance(gridConfig);
+            builder.RegisterInstance(pointerServiceConfig);
             builder.RegisterInstance(unitConfig).AsImplementedInterfaces().AsSelf();
         }
 
         private static void BindInputService(IContainerBuilder builder)
         {
             builder.Register<InputInteractionManager>(Lifetime.Singleton).AsImplementedInterfaces();
+        }
+
+        private void BindPointerService(IContainerBuilder builder)
+        {
+            builder.Register<PointerService>(Lifetime.Singleton).AsImplementedInterfaces();
         }
 
         private static void BindRaycastService(IContainerBuilder builder)
@@ -72,7 +79,7 @@ namespace Scopes.Initialization
             builder.Register<UnitData>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<UnitService>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<UnitFactory>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<UnitActionService>(Lifetime.Singleton).AsImplementedInterfaces();
+            // builder.Register<UnitActionService>(Lifetime.Singleton).AsImplementedInterfaces();
         }
     }
 }

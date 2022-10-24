@@ -1,17 +1,23 @@
 using Services.RaycastService.Entities.States;
 using Services.RaycastService.Interfaces;
-using Services.Realisations.UnitActions;
+using Services.Realisations.UnitService;
 using VContainer;
+using VContainer.Unity;
 
 namespace Services.RaycastService.Entities.Factory
 {
-    public class RaycastStateFactory : IInteractionStateFactory
+    public class RaycastStateFactory : IInteractionStateFactory, IInitializable
     {
         private readonly IObjectResolver _resolver;
 
         public RaycastStateFactory(IObjectResolver resolver)
         {
             _resolver = resolver;
+        }
+
+        public void Initialize()
+        {
+            
         }
 
         public IInteractionState Create(string value)
@@ -27,20 +33,20 @@ namespace Services.RaycastService.Entities.Factory
 
         private IInteractionState DefaultRaycastState()
         {
-            var unitActionService = _resolver.Resolve<IUnitActionService>();
-            return new DefaultInteractionState(unitActionService);
+            var unitService = _resolver.Resolve<IUnitService>();
+            return new DefaultInteractionState(unitService);
         }
 
         private IInteractionState UnitsRaycastState()
         {
-            var unitActionService = _resolver.Resolve<IUnitActionService>();
-            return new UnitsInteractionState(unitActionService);
+            var unitService = _resolver.Resolve<IUnitService>();
+            return new UnitSelectionState(unitService);
         }
 
         private IInteractionState GridRaycastState()
         {
-            var unitActionService = _resolver.Resolve<IUnitActionService>();
-            return new GridInteractionState(unitActionService);
+            var unitService = _resolver.Resolve<IUnitService>();
+            return new UnitMoveState(unitService);
         }
     }
 }

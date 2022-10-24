@@ -11,37 +11,36 @@ namespace Services.GridService
         private readonly int _height;
         private readonly float _cellSize;
         private readonly Transform _gridRoot;
-        private readonly GridCell[][] _gridCellsArray;
+        private readonly GridCell[,] _gridCellsArray;
         private readonly List<GridCell> _gridCellsList;
+        public List<GridCell> GridCells => _gridCellsList;
 
         public Grid(int width, int height, float cellSize)
         {
             _width = width;
             _height = height;
             _cellSize = cellSize;
-            _gridCellsList = new List<GridCell>();
-            _gridCellsArray = new GridCell[_width][];
+            _gridCellsList = new List<GridCell>(_width * _height);
+            _gridCellsArray = new GridCell[_width, _height];
             _gridRoot = new GameObject("Grid Root").transform;
 
             for (var x = 0; x < _width; x++)
             {
-                _gridCellsArray[x] = new GridCell[_height];
                 for (var z = 0; z < _height; z++)
                 {
-                    var gridCell = new GridCell(this, new GridPosition(x, z));
-                    _gridCellsArray[x][z] = gridCell;
+                    var gridPosition = new GridPosition(x, z);
+                    var gridCell = new GridCell(this, gridPosition, GetWorldPosition(gridPosition));
+                    _gridCellsArray[x, z] = gridCell;
                     _gridCellsList.Add(gridCell);
                 }
             }
-
-            _gridCellsList = _gridCellsArray.SelectMany(cell => cell).ToList();
         }
 
 
         public bool TryGetGridCell(Vector3 hitPosition, out GridCell gridCell)
         {
-            var gridPosition = GetGridPosition(hitPosition);
-            gridCell = _gridCellsList.FirstOrDefault(cell => cell.Position.Equals(gridPosition));
+            var pos = GetGridPosition(hitPosition);
+            gridCell = _gridCellsArray[pos.X, pos.Z];
             return !ReferenceEquals(gridCell, null);
         }
 
@@ -51,6 +50,11 @@ namespace Services.GridService
             var zPos = Mathf.RoundToInt(pos.z / _cellSize);
 
             return new GridPosition(xPos, zPos);
+        }
+
+        public Vector3 GetWorldPosition(GridPosition pos)
+        {
+            return new Vector3(pos.X, 0, pos.Z) * _cellSize;
         }
 
         public void CreateDebugObjects(Transform transform)
@@ -72,12 +76,7 @@ namespace Services.GridService
 
         private GridCell GetGridCell(GridPosition pos)
         {
-            return _gridCellsArray[pos.X][pos.Z];
-        }
-
-        private Vector3 GetWorldPosition(GridPosition pos)
-        {
-            return new Vector3(pos.X, 0, pos.Z) * _cellSize;
+            return _gridCellsArray[pos.X, pos.Z];
         }
 
         public GridCell GetRandomGridCell()

@@ -4,24 +4,27 @@ using Services.GridService;
 using Services.LevelGrid;
 using Services.Realisations.Units;
 using UnityEngine;
-using VContainer.Unity;
 
 namespace Services.Realisations.UnitService
 {
-    public class UnitService : IUnitService, ITickable
+    public class UnitService : IUnitService
     {
         private readonly IUnitData _unitData;
+        private readonly IUnitConfig _config;
         private readonly IUnitFactory _unitFactory;
         private readonly ILevelGridService _levelGrid;
-
         private Unit ActiveUnit { get; set; }
         public HashSet<Unit> Units { get; } = new HashSet<Unit>();
 
-        public UnitService(IUnitData unitData, IUnitFactory unitFactory, ILevelGridService levelGrid)
+        public UnitService(IUnitData unitData,
+            IUnitFactory unitFactory,
+            ILevelGridService levelGrid,
+            IUnitConfig config)
         {
             _unitData = unitData;
             _unitFactory = unitFactory;
             _levelGrid = levelGrid;
+            _config = config;
         }
 
         public void CreateLevelUnits(ILevelConfig levelConfig)
@@ -35,12 +38,61 @@ namespace Services.Realisations.UnitService
             }
         }
 
-        //for test only!!
-        public void Tick()
+        public void HandleUnitSelection(ref RaycastHit hit)
+        {
+            if (hit.transform.TryGetComponent<Unit>(out var unit))
+                SetSelectedUnit(unit);
+        }
+
+        public void HandleUnitDeselection()
+        {
+            ActiveUnit?.Deselect();
+            ActiveUnit = null;
+        }
+
+        public void HandleUnitMove(ref RaycastHit hit)
         {
             if (ReferenceEquals(ActiveUnit, null)) return;
-            _levelGrid.TrySetUnitOnGridCell(ActiveUnit, ActiveUnit.WorldPosition, out var pos);
-            //todo track position
+            if (!_levelGrid.TryGetGridCellAtPoint(hit.point, out var cell)) return;
+            ActiveUnit.OnUnitStartMoving += UnitStartMovingHandler;
+            ActiveUnit.OnUnitIsMoving += UnitMovingHandler;
+            ActiveUnit.OnUnitStopMoving += UnitStopMovingHandler;
+            ActiveUnit.Move(cell.WorldPosition);
+        }
+
+        private void UnitMovingHandler(Unit unit)
+        {
+            GridPosition currentPosition = _levelGrid.GetGridPosition(ActiveUnit.CurrentPosition);
+            GridPosition previousPosition = _levelGrid.GetGridPosition(ActiveUnit.PreviousPosition);
+
+            if (currentPosition == previousPosition)
+            {
+                return;
+            }
+
+            if (!_levelGrid.TrySetUnitOnGridCell(ActiveUnit, out var cell))
+            {
+                return;
+            }
+
+            if (!_levelGrid.TryClearGridCellAtPoint(ActiveUnit.PreviousPosition, out var previousCell))
+            {
+                return;
+            }
+
+            ActiveUnit.SetPreviousPosition(_levelGrid.GetWorldPosition(currentPosition));
+        }
+
+        private void SetSelectedUnit(Unit unit)
+        {
+            if (ReferenceEquals(ActiveUnit, unit))
+            {
+                return;
+            }
+
+            ActiveUnit?.Deselect();
+            ActiveUnit = unit;
+            ActiveUnit.SetSelected();
         }
 
         private void InitializeUnit(Unit unit)
@@ -48,19 +100,31 @@ namespace Services.Realisations.UnitService
             if (!Units.Add(unit))
                 return;
 
-            var unitTransform = unit.transform;
-            var gridPos = _levelGrid.GetRandomGridCell().Position.ToVector3();
-            _levelGrid.TrySetUnitOnGridCell(unit, gridPos, out var unitPos);
-            unitTransform.position = unitPos;
-            unitTransform.rotation = Quaternion.identity;
-            unit.OnUnitMoving += UnitMovingHandler;
-            //todo rework to single responsibility
-            Debug.Log("Successfully created unit");
+            unit.UnitName = _config.GetRandomUnitName();
+
+            if (_levelGrid.TryGetRandomGridCell(out GridCell gridCell))
+                unit.transform.SetPositionAndRotation(gridCell.WorldPosition, Quaternion.identity);
+            _levelGrid.TrySetUnitOnGridCell(unit, gridCell);
         }
 
-        private void UnitMovingHandler(Unit activeUnit)
+        private void UnitStartMovingHandler(Unit unit)
         {
-            ActiveUnit = activeUnit.IsMoving ? activeUnit : null;
+            Debug.Log("KALATSKI__Unit START moving");
+            if (!_levelGrid.TryClearGridCellAtPoint(ActiveUnit.CurrentPosition, out var gridCell)) return;
+            ActiveUnit.SetPreviousPosition(gridCell.WorldPosition);
+        }
+
+        private void UnitStopMovingHandler(Unit unit)
+        {
+            Debug.Log("KALATSKI__Unit STOP moving");
+            if (_levelGrid.TrySetUnitOnGridCell(ActiveUnit, out var gridCell))
+            {
+                ActiveUnit.SetPreviousPosition(gridCell.WorldPosition);
+            }
+
+            ActiveUnit.OnUnitStartMoving -= UnitStartMovingHandler;
+            ActiveUnit.OnUnitIsMoving -= UnitMovingHandler;
+            ActiveUnit.OnUnitStopMoving -= UnitStopMovingHandler;
         }
     }
 }

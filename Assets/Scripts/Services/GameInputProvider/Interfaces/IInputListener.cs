@@ -1,9 +1,6 @@
-using Services.GameInputProvider.Entities;
-
 namespace Services.GameInputProvider.Interfaces
 {
-    public interface IInputListener
+    public interface IInputListener : IPointerDownListener, IPointerMoveListener
     {
-        void OnMouseButtonDownHandler(InputArgs args);
     }
 }

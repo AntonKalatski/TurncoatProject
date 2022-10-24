@@ -10,7 +10,10 @@ namespace Services.Realisations.UnitService
     public class UnitConfig : SerializedScriptableObject, IUnitConfig
     {
         [OdinSerialize] private Dictionary<UnitType, Unit> _unitPrefabsMap = new Dictionary<UnitType, Unit>();
+        [SerializeField] private string[] _unitNames = new[] { "Bob", "John", "Rapunzel", "George", "Alex", "Mary" };
 
         public bool TryGetUnit(UnitType type, out Unit unit) => _unitPrefabsMap.TryGetValue(type, out unit);
+
+        public string GetRandomUnitName() => _unitNames[Random.Range(0, _unitNames.Length - 1)];
     }
 }

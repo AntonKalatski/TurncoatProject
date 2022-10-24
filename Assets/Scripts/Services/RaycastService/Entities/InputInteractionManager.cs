@@ -4,11 +4,10 @@ using Services.GameInputProvider.Entities;
 using Services.GameInputProvider.Interfaces;
 using Services.RaycastService.Interfaces;
 using UnityEngine;
-using VContainer.Unity;
 
 namespace Services.RaycastService.Entities
 {
-    public class InputInteractionManager : IInteractionManager, IInputListener, IDisposable
+    public class InputInteractionManager : IInteractionManager, IPointerDownListener, IDisposable
     {
         private readonly Dictionary<string, IInteractionState> _states = new Dictionary<string, IInteractionState>();
         private readonly IInputService _inputService;
@@ -17,7 +16,8 @@ namespace Services.RaycastService.Entities
         private readonly string[] _layers = new string[7];
         public IInteractionState Current { get; private set; }
 
-        public InputInteractionManager(IInputService inputService, IRaycastService raycastService,
+        public InputInteractionManager(IInputService inputService,
+            IRaycastService raycastService,
             IInteractionStateFactory factory)
         {
             _inputService = inputService;
@@ -35,34 +35,36 @@ namespace Services.RaycastService.Entities
                 _layers[counter++] = layerName;
             }
 
-            _inputService.AddInputListener(this);
+            _inputService.AddPointerDownListener(this);
             Debug.Log($"{nameof(InputInteractionManager)} - End of Initialization!");
         }
 
         public void Dispose()
         {
-            _inputService.RemoveInputListener(this);
+            _inputService.RemovePointerDownListener(this);
         }
 
-        public void OnMouseButtonDownHandler(InputArgs args)
+        public void OnPointerDownHandler(InputArgs args)
         {
             if (!_raycastService.Raycast(in args, out RaycastHit hit))
                 return;
             var layerId = hit.transform.gameObject.layer;
-            if (!TryChangeState(hit, layerId))
+            if (!TryChangeState(ref hit, layerId))
                 return;
             Debug.Log($"{nameof(RaycastService)} Successfully changed to layer {LayerMask.LayerToName(layerId)}");
         }
 
-        private bool TryChangeState(RaycastHit hit, int layerId)
+        private bool TryChangeState(ref RaycastHit hit, int layerId)
         {
             var layerName = LayerMask.LayerToName(layerId);
             if (!_states.TryGetValue(layerName, out var state))
             {
-                Debug.LogWarning($"{nameof(InputInteractionManager)} - There is no such state, creating through factory");
+                Debug.LogWarning(
+                    $"{nameof(InputInteractionManager)} - There is no such state, creating through factory");
                 if (!TryCreateState(layerName, out state))
                 {
-                    Debug.LogWarning($"{nameof(InputInteractionManager)} - Factory doesn't has any conditions to create such state");
+                    Debug.LogWarning(
+                        $"{nameof(InputInteractionManager)} - Factory doesn't has any conditions to create such state");
                     return false;
                 }
 
@@ -72,13 +74,13 @@ namespace Services.RaycastService.Entities
             if (ReferenceEquals(_states[layerName], Current))
             {
                 Debug.Log($"{nameof(InputInteractionManager)} - Same raycast layer, State stays the same!");
-                Current?.ContinueState(hit);
+                Current?.ContinueState(ref hit);
                 return false;
             }
 
             Current?.ExitState();
             Current = _states[layerName];
-            Current.EnterState(hit);
+            Current.EnterState(ref hit);
             return true;
         }
 

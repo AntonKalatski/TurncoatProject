@@ -1,24 +1,21 @@
+using UnityEngine;
 using Services.GameInputProvider.Entities;
 using Services.GameInputProvider.Interfaces;
 using Services.RaycastService.Interfaces;
-using Services.Realisations.Units;
-using UnityEngine;
 
 namespace Services.GridService
 {
-    //todo only creates grid but stores a reference
-    //todo this service contains rules 
-    public class GridService : IGridService, IInputListener
+    public class GridService : IGridService, IPointerDownListener
     {
         private readonly GridConfig _config;
         private readonly IRaycastService _raycastService;
-        private Grid Grid { get; set; }
+        public Grid Grid { get; private set; }
 
         public GridService(GridConfig config, IInputService inputService, IRaycastService raycastService)
         {
             _config = config;
             _raycastService = raycastService;
-            inputService.AddInputListener(this);
+            inputService.AddPointerDownListener(this);
         }
 
         public Grid CreateGrid()
@@ -28,23 +25,33 @@ namespace Services.GridService
             return Grid;
         }
 
-        public void OnMouseButtonDownHandler(InputArgs args)
+        public bool TryGetGridCell(Vector3 position, out GridCell cell)
+        {
+            return Grid.TryGetGridCell(position, out cell);
+        }
+
+        public bool TryGetRandomGridCell(out GridCell cell)
+        {
+            cell = Grid.GetRandomGridCell();
+            return !ReferenceEquals(cell, null);
+        }
+
+        public Vector3 GetWorldPosition(GridPosition gridPosition)
+        {
+            return Grid.GetWorldPosition(gridPosition);
+        }
+
+        public GridPosition GetGridPosition(Vector3 position)
+        {
+            return Grid.GetGridPosition(position);
+        }
+
+        public void OnPointerDownHandler(InputArgs args)
         {
             if (_raycastService.Raycast(args, out RaycastHit hit))
             {
-                Debug.Log(Grid.GetGridPosition(hit.point));
+                Debug.Log(Grid.GetGridPosition(hit.point).ToString());
             }
         }
-
-        // public GridCell GetGridCell(Vector3 pos)
-        // {
-            //     var gridPosition = Grid.GetGridPosition(pos);
-        //     return Grid.GetGridCell(gridPosition);
-        // }
-        //
-        // public void SetGridCell(Unit selectedUnit, GridCell cell)
-        // {
-        //     cell.SetUnit(selectedUnit);
-        // }
     }
 }

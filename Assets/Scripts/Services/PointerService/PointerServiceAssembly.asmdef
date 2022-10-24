@@ -1,0 +1,18 @@
+{
+    "name": "PointerServiceAssembly",
+    "rootNamespace": "",
+    "references": [
+        "GUID:dd773241eeffebb40bd604e06b7a9705",
+        "GUID:6652da27810547ec96308a52fef2d09d",
+        "GUID:b0214a6008ed146ff8f122a6a9c2f6cc"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

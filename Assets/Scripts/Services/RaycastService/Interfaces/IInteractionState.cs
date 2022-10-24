@@ -4,8 +4,8 @@ namespace Services.RaycastService.Interfaces
 {
     public interface IInteractionState
     {
-        void EnterState(RaycastHit hit);
-        void ContinueState(RaycastHit hit);
+        void EnterState(ref RaycastHit hit);
+        void ContinueState(ref RaycastHit hit);
         void ExitState();
     }
 }

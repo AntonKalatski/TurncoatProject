@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: GridConfig
   m_EditorClassIdentifier: 
   prefab: {fileID: 5481035507252857929, guid: 9e36bc0e5fa0add4a9ac344702baa253, type: 3}
-  x: 10
-  z: 10
-  cellSize: 1
+  x: 5
+  z: 5
+  cellSize: 2

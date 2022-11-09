@@ -18,9 +18,9 @@ namespace Services.LevelGrid
         public void CreateLevelGrid()
         {
             _gridService.CreateGrid();
-            foreach (var cell in _gridService.Grid.GridCells)
+            foreach (var cell in _gridService.Grid.GridCellsMap)
             {
-                _levelGridMap.Add(cell, null);
+                _levelGridMap.Add(cell.Value, null);
             }
         }
 

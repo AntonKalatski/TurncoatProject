@@ -9,6 +9,9 @@ namespace Services.GameLevelService
             _levelsConfig = levelsConfig;
         }
 
-        public ILevelConfig GetLevelConfig() => _levelsConfig.GetLevelConfig();
+        public ILevelConfig GetLevelConfig()
+        {
+            return _levelsConfig.GetLevelConfig();
+        }
     }
 }

@@ -1,11 +1,14 @@
-using UnityEngine;
+using Services.GameCameraProvider;
 
-namespace Services.GameCameraProvider
+namespace Services.CameraService.Interfaces
 {
     public interface ICameraProvider
     {
-        Transform Transform { get; }
-        Camera Camera { get; }
         CameraArgs CameraArgs { get; }
+    }
+
+    public interface ICameraProvider<out TCamera> : ICameraProvider
+    {
+        TCamera Camera { get; }
     }
 }

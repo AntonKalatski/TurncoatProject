@@ -1,4 +1,4 @@
-using Providers.GameCameraProvider;
+using Services.CameraService.Entities;
 
 namespace Services.GameCameraProvider
 {

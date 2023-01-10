@@ -189,6 +189,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 330585546}
+  - component: {fileID: 330585549}
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
@@ -258,7 +259,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
-  m_LocalRotation: {x: -0.034122378, y: 0.16009292, z: -0.17174903, w: 0.97144645}
+  m_LocalRotation: {x: -0.034122407, y: 0.16009296, z: -0.17174907, w: 0.97144645}
   m_LocalPosition: {x: -6.5358515, y: 0.81612873, z: -0.007485509}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -333,6 +334,21 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &330585549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e09a7534a9f34b11beaa9f808ec1efe1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameCamera: {fileID: 330585545}
+  cameraArgs:
+    cameraId: 0
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -539,6 +555,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 878021038}
+  - component: {fileID: 878021040}
   - component: {fileID: 878021039}
   m_Layer: 0
   m_Name: CinemachineVirtualCamera
@@ -554,7 +571,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 878021037}
-  m_LocalRotation: {x: -0.034122378, y: 0.16009292, z: -0.17174903, w: 0.97144645}
+  m_LocalRotation: {x: -0.034122407, y: 0.16009296, z: -0.17174907, w: 0.97144645}
   m_LocalPosition: {x: -6.5358515, y: 0.81612873, z: -0.007485509}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -601,6 +618,21 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 1964490607}
+--- !u!114 &878021040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 878021037}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0bc81eebbac473eb6cd7e15fc783e8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameCamera: {fileID: 878021039}
+  cameraArgs:
+    cameraId: 1
 --- !u!1 &1045997967
 GameObject:
   m_ObjectHideFlags: 0
@@ -1045,7 +1077,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2103646885}
-  - component: {fileID: 2103646884}
   m_Layer: 0
   m_Name: GameSceneCameraRoot
   m_TagString: MainCamera
@@ -1053,21 +1084,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2103646884
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2103646883}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9612450b80044c9290bf6942f314722e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameCamera: {fileID: 330585545}
-  cameraArgs:
-    cameraId: 0
 --- !u!4 &2103646885
 Transform:
   m_ObjectHideFlags: 0

@@ -1,11 +1,11 @@
 using System;
+using Services.CameraService.Entities;
 using UnityEngine;
 using VContainer.Unity;
-using Object = UnityEngine.Object;
-using Providers.GameCameraProvider;
-using Services.GameCameraProvider;
+using Services.CameraService.Interfaces;
 using Services.GameInputProvider.Entities;
 using Services.GameInputProvider.Interfaces;
+using Object = UnityEngine.Object;
 
 namespace Services.PointerService
 {
@@ -13,11 +13,9 @@ namespace Services.PointerService
     {
         private readonly IInputService _inputService;
         private readonly ICameraService _cameraService;
-
         private readonly PointerServiceConfig _config;
 
-        //fields
-        private ICameraProvider _camera;
+        private ICameraProvider<Camera> _camera;
         private Transform _pointer;
         private Plane _plane;
 
@@ -31,22 +29,29 @@ namespace Services.PointerService
         public void Start()
         {
             _inputService.AddPointerMoveListener(this);
-            _camera = _cameraService.GetCameraProvider(CameraId.Main);
+            if (!_cameraService.TryGetCameraProvider(CameraId.Camera, out _camera))
+            {
+                Debug.LogError($"{nameof(PointerService)}: Can't get camera provider");
+            }
+           
+            
             _plane = new Plane(Vector3.up, Vector3.zero);
-            var pointerRoot = new GameObject("Debug Pointer Root").transform;
+            Transform pointerRoot = new GameObject("Debug Pointer Root").transform;
             _pointer = Object.Instantiate(_config.PointerPrefab, Vector3.zero, Quaternion.identity, pointerRoot)
                 .transform;
         }
 
         public void OnPointerMoveHandler(InputArgs args)
         {
-            var mousePos = args.Pointer;
+            Vector2 mousePos = args.Pointer;
             if (_camera.Camera == null)
+            {
                 return;
+            }
 
-            var ray = _camera.Camera.ScreenPointToRay(mousePos);
+            Ray ray = _camera.Camera.ScreenPointToRay(mousePos);
 
-            if (_plane.Raycast(ray, out var enter))
+            if (_plane.Raycast(ray, out float enter))
             {
                 _pointer.transform.position = ray.GetPoint(enter);
             }

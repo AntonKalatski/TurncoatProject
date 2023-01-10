@@ -1,16 +1,15 @@
+using Services.CameraService.Interfaces;
 using VContainer;
 using UnityEngine;
 using Services.GameCameraProvider;
 
 namespace Services.CameraService.Entities
 {
-    public class CameraProvider : MonoBehaviour, ICameraProvider
+    public abstract class CameraProvider<TCamera> : MonoBehaviour, ICameraProvider<TCamera>
     {
-        [SerializeField] private Camera gameCamera;
+        [SerializeField] private TCamera gameCamera;
         [SerializeField] private CameraArgs cameraArgs;
-        
-        public Transform Transform => transform;
-        public Camera Camera => gameCamera;
+        public TCamera Camera => gameCamera;
         public CameraArgs CameraArgs => cameraArgs;
 
         [Inject]

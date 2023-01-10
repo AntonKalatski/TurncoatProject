@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Providers.GameCameraProvider;
-using Services.GameCameraProvider;
+using Services.CameraService.Interfaces;
 
 namespace Services.CameraService.Entities
 {
@@ -10,23 +9,28 @@ namespace Services.CameraService.Entities
         private readonly Dictionary<CameraId, ICameraProvider>
             _cameraProviders = new Dictionary<CameraId, ICameraProvider>();
 
-        public ICameraProvider GetCameraProvider(CameraId id)
+        public bool TryGetCameraProvider<TCamera>(CameraId id, out ICameraProvider<TCamera> provider)
         {
-            if (_cameraProviders.TryGetValue(id, out var provider)) return provider;
+            provider = null;
+            if (_cameraProviders.TryGetValue(id, out ICameraProvider cameraProvider))
+            {
+                return !ReferenceEquals(provider = cameraProvider as ICameraProvider<TCamera>, null);
+            }
+
             Debug.Log("There is no such camera provider");
-            return null;
+            return false;
         }
 
-        public void AddCameraProvider(ICameraProvider provider)
+        public void AddCameraProvider<TCamera>(ICameraProvider<TCamera> provider)
         {
             if (_cameraProviders.ContainsKey(provider.CameraArgs.cameraId)) return;
             Debug.Log("Camera provider registered");
             _cameraProviders.Add(provider.CameraArgs.cameraId, provider);
         }
 
-        public void RemoveCameraProvider(ICameraProvider provider)
+        public void RemoveCameraProvider<TCamera>(ICameraProvider<TCamera> provider)
         {
-            if (!_cameraProviders.TryGetValue(provider.CameraArgs.cameraId, out var result))
+            if (!_cameraProviders.TryGetValue(provider.CameraArgs.cameraId, out ICameraProvider result))
                 return;
             Debug.Log("Camera provider removed");
             _cameraProviders.Remove(provider.CameraArgs.cameraId);

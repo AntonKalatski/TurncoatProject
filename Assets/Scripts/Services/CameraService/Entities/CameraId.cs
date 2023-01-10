@@ -1,9 +1,8 @@
-namespace Providers.GameCameraProvider
+namespace Services.CameraService.Entities
 {
     public enum CameraId
     {
-        Main,
-        Cutscene,
-        Overview
+        Camera,
+        CinemachineCamera
     }
 }

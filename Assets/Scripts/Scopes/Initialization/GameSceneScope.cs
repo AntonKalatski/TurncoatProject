@@ -22,7 +22,7 @@ namespace Scopes.Initialization
         protected override void Configure(IContainerBuilder builder)
         {
             Debug.Log("InitializationSceneScope Configure");
-            builder.RegisterEntryPoint<GameSceneBootstrapper>();
+            builder.Register<GameSceneBootstrapper>(Lifetime.Singleton).AsImplementedInterfaces().Build();
 
             BindConfigs(builder);
             BindLevelServices(builder);
@@ -65,7 +65,7 @@ namespace Scopes.Initialization
         private void BindCameraServices(IContainerBuilder builder)
         {
             builder.Register<CameraService>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.RegisterComponentInHierarchy<CameraProvider>().AsImplementedInterfaces();
+            builder.RegisterComponentInHierarchy<UnityCameraProvider>().AsImplementedInterfaces();
         }
 
         private void BindGridServices(IContainerBuilder builder)

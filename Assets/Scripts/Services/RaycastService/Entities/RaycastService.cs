@@ -1,6 +1,6 @@
+using Services.CameraService.Entities;
 using UnityEngine;
-using Providers.GameCameraProvider;
-using Services.GameCameraProvider;
+using Services.CameraService.Interfaces;
 using Services.GameInputProvider.Entities;
 using Services.RaycastService.Interfaces;
 
@@ -9,7 +9,7 @@ namespace Services.RaycastService.Entities
     public class RaycastService : IRaycastService
     {
         private readonly ICameraService _cameraService;
-        private ICameraProvider CameraProvider { get; set; }
+        private ICameraProvider<Camera> _cameraProvider;
 
         public RaycastService(ICameraService cameraService)
         {
@@ -18,12 +18,15 @@ namespace Services.RaycastService.Entities
 
         public void Initialize()
         {
-            CameraProvider = _cameraService.GetCameraProvider(CameraId.Main);
+            if (!_cameraService.TryGetCameraProvider(CameraId.Camera, out _cameraProvider))
+            {
+                Debug.LogError($"{nameof(RaycastService)}: Can't get camera provider");
+            }
         }
 
         public bool Raycast(in InputArgs args, out RaycastHit hit)
         {
-            var ray = CameraProvider.Camera.ScreenPointToRay(args.Pointer);
+            var ray = _cameraProvider.Camera.ScreenPointToRay(args.Pointer);
             return Physics.Raycast(ray, out hit);
         }
     }

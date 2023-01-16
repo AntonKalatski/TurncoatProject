@@ -1,78 +1,102 @@
+using System;
 using Cinemachine;
+using Services.CameraService.Entities;
+using Services.CameraService.Interfaces;
+using Services.GameInputProvider.Interfaces;
 using UnityEngine;
+using VContainer.Unity;
 
 namespace Game.Controllers.GameCamera
 {
-    public class CameraController : MonoBehaviour
+    public class CameraController : IKeyboardInputListener, IStartable, IDisposable
     {
-        [SerializeField] private CinemachineVirtualCamera cinemachineVirtualCamera;
+        private CinemachineVirtualCamera _cinemachineVirtualCamera;
         private CinemachineTransposer _transposer;
         private const float MinFollowYOffset = 2f;
         private const float MaxFollowYOffset = 8f;
         private Vector3 _targetFollowOffset;
+        private IInputService _inputService;
+        private ICameraService _cameraService;
+        private Transform _rootObject;
+        private Transform _cameraFollowPoint;
 
-        private void Awake()
+        public CameraController(IInputService inputService, ICameraService cameraService)
         {
-            _transposer = cinemachineVirtualCamera.GetCinemachineComponent<CinemachineTransposer>();
+            _inputService = inputService;
+            _cameraService = cameraService;
+        }
+
+        public void Start()
+        {
+            _inputService.AddKeyboardListener(this);
+            if (_cameraService.TryGetCameraProvider(CameraId.CinemachineCamera,
+                    out ICameraProvider<CinemachineVirtualCamera> cameraProvider))
+            {
+                _rootObject = new GameObject("CameraFollowPointRoot").transform;
+                _cameraFollowPoint = new GameObject("CameraFollowPoint").transform;
+                _cameraFollowPoint.SetParent(_rootObject);
+                cameraProvider.Camera.Follow = _cameraFollowPoint;
+                cameraProvider.Camera.LookAt = _cameraFollowPoint;
+                _transposer = cameraProvider.Camera.GetCinemachineComponent<CinemachineTransposer>();
+            }
+
             _targetFollowOffset = _transposer.m_FollowOffset;
         }
 
-        void Update()
+        public void Dispose()
         {
-            //refactor this shit
-            HandleMovement();
-            HandleRotation();
+            _inputService.RemoveKeyboardListener(this);
+        }
+
+        public void OnKeyDown(KeyCode key)
+        {
+            HandleMovement(key);
+            HandleRotation(key);
             HandleZoom();
         }
 
-        private void HandleMovement()
+        private void HandleMovement(KeyCode keyCode)
         {
-            Vector3 inputMoveDir = new Vector3(0, 0, 0);
+            var inputMoveDir = new Vector3(0, 0, 0);
 
-            if (Input.GetKey(KeyCode.W))
+            switch (keyCode)
             {
-                inputMoveDir.z = +1f;
+                case KeyCode.W:
+                    inputMoveDir.z = +1f;
+                    break;
+                case KeyCode.S:
+                    inputMoveDir.z = -1f;
+                    break;
+                case KeyCode.A:
+                    inputMoveDir.x = -1f;
+                    break;
+                case KeyCode.D:
+                    inputMoveDir.x = +1f;
+                    break;
             }
 
-            if (Input.GetKey(KeyCode.S))
-            {
-                inputMoveDir.z = -1f;
-            }
-
-            if (Input.GetKey(KeyCode.A))
-            {
-                inputMoveDir.x = -1f;
-            }
-
-            if (Input.GetKey(KeyCode.D))
-            {
-                inputMoveDir.x = +1f;
-            }
-
-            Vector3 moveVector = transform.forward * inputMoveDir.z + transform.right * inputMoveDir.x;
+            Vector3 moveVector =
+                _cameraFollowPoint.forward * inputMoveDir.z + _cameraFollowPoint.right * inputMoveDir.x;
             float moveSpeed = 5f; //make variable from config
-            transform.position += moveVector * (moveSpeed * Time.deltaTime);
+            _cameraFollowPoint.position += moveVector * (moveSpeed * Time.deltaTime);
         }
 
-        private void HandleRotation()
+        private void HandleRotation(KeyCode keyCode)
         {
             Vector3 rotationVector = new Vector3(0, 0, 0);
 
-            if (Input.GetKey(KeyCode.Q))
+            rotationVector.y = keyCode switch
             {
-                rotationVector.y = +1f;
-            }
+                KeyCode.Q => +1f,
+                KeyCode.E => -1f,
+                _ => rotationVector.y
+            };
 
-            if (Input.GetKey(KeyCode.E))
-            {
-                rotationVector.y = -1f;
-            }
-
-            float rotationSpeed = 50f; //make variable from config
-            transform.eulerAngles += rotationVector * (rotationSpeed * Time.deltaTime);
+            var rotationSpeed = 50f; //make variable from config
+            _cameraFollowPoint.eulerAngles += rotationVector * (rotationSpeed * Time.deltaTime);
         }
 
-        private void HandleZoom()
+        private void HandleZoom()//TODO mouse wheel listener
         {
             float zoomAmount = 1f; //make variable from config
             float zoomSpeed = 5f; //make variable from config

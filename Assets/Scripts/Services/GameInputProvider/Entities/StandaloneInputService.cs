@@ -5,18 +5,27 @@ using VContainer.Unity;
 
 namespace Services.GameInputProvider.Entities
 {
-    public class StandaloneInputService : IInputService, ILateTickable
+    public class StandaloneInputService : IInputService, IInitializable, ILateTickable
     {
         private readonly IInputConfig _config;
         private Action<InputArgs> _onPointerDown;
         private Action<InputArgs> _onPointerMove;
+        private Action<KeyCode> _onKeyInput;
 
         private Vector2 _prevPos;
         private Vector2 _currentPos;
+        private int[] _values;
+        private bool[] _keys;
 
         public StandaloneInputService(IInputConfig config)
         {
             _config = config;
+        }
+
+        public void Initialize()
+        {
+            _values = (int[]) Enum.GetValues(typeof(KeyCode));
+            _keys = new bool[_values.Length];
         }
 
         public void LateTick()
@@ -33,7 +42,23 @@ namespace Services.GameInputProvider.Entities
             {
                 OnMouseButtonDown(0);
             }
+
+            if (!Input.anyKey)
+            {
+                return;
+            }
+
+            foreach (int keyCode in _values)
+            {
+                if (!Input.GetKey((KeyCode) keyCode))
+                {
+                    continue;
+                }
+
+                OnKeyInput((KeyCode)keyCode);
+            }
         }
+
 
         private void OnMouseButtonDown(int pointerId)
         {
@@ -85,6 +110,21 @@ namespace Services.GameInputProvider.Entities
         public void RemovePointerMoveListener(IPointerMoveListener listener)
         {
             _onPointerMove -= listener.OnPointerMoveHandler;
+        }
+
+        public void AddKeyboardListener(IKeyboardInputListener keyboardInputListener)
+        {
+            _onKeyInput += keyboardInputListener.OnKeyDown;
+        }
+
+        public void RemoveKeyboardListener(IKeyboardInputListener keyboardInputListener)
+        {
+            _onKeyInput -= keyboardInputListener.OnKeyDown;
+        }
+        
+        private void OnKeyInput(KeyCode keyCode)
+        {
+            _onKeyInput?.Invoke(keyCode);
         }
 
         #endregion

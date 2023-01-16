@@ -1,4 +1,6 @@
+using Game.Controllers.GameCamera;
 using Services.CameraService.Entities;
+using Services.CameraService.Interfaces;
 using Services.GameLevelService;
 using Services.GridService;
 using Services.LevelGrid;
@@ -65,7 +67,9 @@ namespace Scopes.Initialization
         private void BindCameraServices(IContainerBuilder builder)
         {
             builder.Register<CameraService>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.RegisterComponentInHierarchy<UnityCameraProvider>().AsImplementedInterfaces();
+            builder.Register<CameraController>(Lifetime.Singleton).AsImplementedInterfaces().Build();
+            builder.RegisterComponentInHierarchy<CinemachineCameraProvider>();
+            builder.RegisterComponentInHierarchy<UnityCameraProvider>();
         }
 
         private void BindGridServices(IContainerBuilder builder)

@@ -8,7 +8,7 @@ using VContainer.Unity;
 
 namespace Game.Controllers.GameCamera
 {
-    public class CameraController : IKeyboardInputListener, IStartable, IDisposable
+    public class CameraController : IKeyboardInputListener, IMouseScrollListener,IStartable, IDisposable
     {
         private CinemachineVirtualCamera _cinemachineVirtualCamera;
         private CinemachineTransposer _transposer;
@@ -29,6 +29,7 @@ namespace Game.Controllers.GameCamera
         public void Start()
         {
             _inputService.AddKeyboardListener(this);
+            _inputService.AddMouseScrollListener(this);
             if (_cameraService.TryGetCameraProvider(CameraId.CinemachineCamera,
                     out ICameraProvider<CinemachineVirtualCamera> cameraProvider))
             {
@@ -46,13 +47,18 @@ namespace Game.Controllers.GameCamera
         public void Dispose()
         {
             _inputService.RemoveKeyboardListener(this);
+            _inputService.RemoveMouseScrollListener(this);
         }
 
         public void OnKeyDown(KeyCode key)
         {
             HandleMovement(key);
             HandleRotation(key);
-            HandleZoom();
+        }
+
+        public void MouseScroll(Vector2 scroll)
+        {
+            HandleZoom(ref scroll);
         }
 
         private void HandleMovement(KeyCode keyCode)
@@ -96,20 +102,20 @@ namespace Game.Controllers.GameCamera
             _cameraFollowPoint.eulerAngles += rotationVector * (rotationSpeed * Time.deltaTime);
         }
 
-        private void HandleZoom()//TODO mouse wheel listener
+        private void HandleZoom(ref Vector2 scroll)//TODO mouse wheel listener
         {
             float zoomAmount = 1f; //make variable from config
             float zoomSpeed = 5f; //make variable from config
             _targetFollowOffset = _transposer.m_FollowOffset;
 
-            if (Input.mouseScrollDelta.y > 0)
+            if (scroll.y > 0)
                 _targetFollowOffset.y -= zoomAmount;
-            if (Input.mouseScrollDelta.y < 0)
+            if (scroll.y < 0)
                 _targetFollowOffset.y += zoomAmount;
 
+            var deltaTime = Time.deltaTime;
             _targetFollowOffset.y = Mathf.Clamp(_targetFollowOffset.y, MinFollowYOffset, MaxFollowYOffset);
-            _transposer.m_FollowOffset =
-                Vector3.Lerp(_transposer.m_FollowOffset, _targetFollowOffset, Time.deltaTime * zoomSpeed);
+            _transposer.m_FollowOffset = Vector3.Lerp(_transposer.m_FollowOffset, _targetFollowOffset, deltaTime * zoomSpeed);
         }
     }
 }

@@ -10,5 +10,7 @@ namespace Services.GameInputProvider.Interfaces
         void RemovePointerMoveListener(IPointerMoveListener pointerMoveListener);
         void AddKeyboardListener(IKeyboardInputListener keyboardInputListener);
         void RemoveKeyboardListener(IKeyboardInputListener keyboardInputListener);
+        void AddMouseScrollListener(IMouseScrollListener mouseScrollListener);
+        void RemoveMouseScrollListener(IMouseScrollListener mouseScrollListener);
     }
 }

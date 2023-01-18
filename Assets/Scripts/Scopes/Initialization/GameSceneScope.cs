@@ -1,6 +1,5 @@
 using Game.Controllers.GameCamera;
 using Services.CameraService.Entities;
-using Services.CameraService.Interfaces;
 using Services.GameLevelService;
 using Services.GridService;
 using Services.LevelGrid;

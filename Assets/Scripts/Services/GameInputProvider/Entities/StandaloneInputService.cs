@@ -1,7 +1,7 @@
 using System;
-using Services.GameInputProvider.Interfaces;
 using UnityEngine;
 using VContainer.Unity;
+using Services.GameInputProvider.Interfaces;
 
 namespace Services.GameInputProvider.Entities
 {
@@ -11,6 +11,7 @@ namespace Services.GameInputProvider.Entities
         private Action<InputArgs> _onPointerDown;
         private Action<InputArgs> _onPointerMove;
         private Action<KeyCode> _onKeyInput;
+        private Action<Vector2> _onMouseScrolling;
 
         private Vector2 _prevPos;
         private Vector2 _currentPos;
@@ -43,31 +44,24 @@ namespace Services.GameInputProvider.Entities
                 OnMouseButtonDown(0);
             }
 
-            if (!Input.anyKey)
+            Vector2 mouseScrollDelta = Input.mouseScrollDelta;
+            if (mouseScrollDelta.magnitude > 0f)
             {
-                return;
+                OnMouseScrolling(ref mouseScrollDelta);
             }
 
-            foreach (int keyCode in _values)
+            if (Input.anyKey)
             {
-                if (!Input.GetKey((KeyCode) keyCode))
+                foreach (int keyCode in _values)
                 {
-                    continue;
+                    if (!Input.GetKey((KeyCode) keyCode))
+                    {
+                        continue;
+                    }
+
+                    OnKeyInput((KeyCode) keyCode);
                 }
-
-                OnKeyInput((KeyCode)keyCode);
             }
-        }
-
-
-        private void OnMouseButtonDown(int pointerId)
-        {
-            _onPointerDown?.Invoke(new InputArgs(_currentPos, _prevPos, pointerId));
-        }
-
-        private void OnMousePositionChanged()
-        {
-            _onPointerMove?.Invoke(new InputArgs(_currentPos, _prevPos));
         }
 
         #region InputListener
@@ -121,10 +115,35 @@ namespace Services.GameInputProvider.Entities
         {
             _onKeyInput -= keyboardInputListener.OnKeyDown;
         }
-        
+
+        public void AddMouseScrollListener(IMouseScrollListener mouseScrollListener)
+        {
+            _onMouseScrolling += mouseScrollListener.MouseScroll;
+        }
+
+        public void RemoveMouseScrollListener(IMouseScrollListener mouseScrollListener)
+        {
+            _onMouseScrolling -= mouseScrollListener.MouseScroll;
+        }
+
         private void OnKeyInput(KeyCode keyCode)
         {
             _onKeyInput?.Invoke(keyCode);
+        }
+
+        private void OnMouseButtonDown(int pointerId)
+        {
+            _onPointerDown?.Invoke(new InputArgs(_currentPos, _prevPos, pointerId));
+        }
+
+        private void OnMousePositionChanged()
+        {
+            _onPointerMove?.Invoke(new InputArgs(_currentPos, _prevPos));
+        }
+
+        private void OnMouseScrolling(ref Vector2 mouseScrollDelta)
+        {
+            _onMouseScrolling?.Invoke(mouseScrollDelta);
         }
 
         #endregion
